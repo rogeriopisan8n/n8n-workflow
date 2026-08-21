@@ -1,0 +1,228 @@
+{
+  "updatedAt": "2026-08-21T18:02:30.273Z",
+  "createdAt": "2026-08-21T17:06:23.420Z",
+  "id": "HV7PFOlsjcBo5TsV",
+  "name": "Backup Workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e5b1939b-7bef-4680-a047-db101e093e04",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        256,
+        0
+      ],
+      "id": "efd519f0-7a09-4405-a08e-60f63afff2df",
+      "name": "Get many workflows",
+      "credentials": {
+        "n8nApi": {
+          "id": "eWBe3BrzOdPBmAdj",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "rogeriopisan8n",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflow",
+          "mode": "list",
+          "cachedResultName": "n8n-workflow",
+          "cachedResultUrl": "https://github.com/rogeriopisan8n/n8n-workflow"
+        },
+        "filePath": "={{ $json.id }}",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ],
+      "id": "b8b4fbf8-8aff-4b3e-81e1-9b75ebbfb8d2",
+      "name": "Get a file",
+      "webhookId": "224c117c-9de6-4bc7-8e4e-8381c44181b8",
+      "alwaysOutputData": true,
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "5lkVZcAT1xYqp7SP",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "e6ca1f79-a10a-4c2f-9222-b8796425ef76"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "criar_backup"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        0
+      ],
+      "id": "830fefa4-99ca-4e10-aed2-17c0145400fb",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "rogeriopisan8n",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflow",
+          "mode": "list",
+          "cachedResultName": "n8n-workflow",
+          "cachedResultUrl": "https://github.com/rogeriopisan8n/n8n-workflow"
+        },
+        "filePath": "={{ $('Get many workflows').item.json.name.replace(/[^a-z0-9]/gi, '_') }}.json",
+        "fileContent": "={{ JSON.stringify($('Get many workflows').item.json, null, 2) }}",
+        "commitMessage": "=Backup {{ $('Get many workflows').item.json.name }}"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        0
+      ],
+      "id": "a10de1d5-ef88-4c66-9712-814efa68f774",
+      "name": "Create a file",
+      "webhookId": "3cca8596-69fb-4cd2-a6d4-bb8e98d12dd0",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "5lkVZcAT1xYqp7SP",
+          "name": "GitHub account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many workflows": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "71347189-22ef-4382-93ae-6e15c281ee66",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-21T17:06:23.423Z",
+      "createdAt": "2026-08-21T17:06:23.423Z",
+      "role": "workflow:owner",
+      "workflowId": "HV7PFOlsjcBo5TsV",
+      "projectId": "VvYL4IoPp5j8LYt4"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
