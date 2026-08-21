@@ -1,0 +1,59 @@
+{
+  "updatedAt": "2026-07-18T17:10:03.000Z",
+  "createdAt": "2026-07-18T17:06:04.924Z",
+  "id": "DCSLz6InQUdzQRZd",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "eeab5e85-2fe1-4399-9935-5ab4ae36cf29",
+      "name": "Telegram Trigger",
+      "webhookId": "b13b2156-5cc7-4979-a323-86120c9f5cc2",
+      "credentials": {
+        "telegramApi": {
+          "id": "Amkx3tsCkOoR9PGh",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "9d48ddf5-2ffe-43ab-a3e0-9df1e95a3c7a",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-07-18T17:06:04.926Z",
+      "createdAt": "2026-07-18T17:06:04.926Z",
+      "role": "workflow:owner",
+      "workflowId": "DCSLz6InQUdzQRZd",
+      "projectId": "VvYL4IoPp5j8LYt4"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
