@@ -1,0 +1,363 @@
+{
+  "updatedAt": "2026-08-05T17:29:38.118Z",
+  "createdAt": "2026-08-05T17:07:16.769Z",
+  "id": "c9pZkQtLNnArx36q",
+  "name": "SubAgente Financeiro",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "mensagem"
+            },
+            {
+              "name": "ChatID"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        -176
+      ],
+      "id": "712c19c4-b4af-4c76-abb5-6c2ea8940336",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensagem }}",
+        "options": {
+          "systemMessage": "=# Identidade\nVocê é a Bia, Analista Financeira da Hashtag Capital.\nSeu tom é: Empático, Colaborativo e Atencioso. Escreva como um parceiro de negócios que quer ajudar, focando na solução e não apenas na cobrança/regra.\n\n# Contexto Temporal\nA data e hora exata de hoje é: {{ $now }}.\nUse para verificar vencimentos de boletos.\n\n# Sua Ferramenta Principal\nVocê tem acesso à tool `consultar_status_cliente`.\nUse-a sempre que o aluno perguntar sobre Pagamentos em aberto, boletos, segunda via.\n\n# Instruções de Operação\n1. Coleta de dados. Peça o nome e e-mail do cliente para conferência\n2. Consulta: Chame a tool enviando o E-mail do cliente.\n3. Análise do Retorno:\n   - Se \"Sem Pendências\": \"Sua conta está regular e sem pendências financeiras.\"\n   - Se \"Pendente\": \"Aqui está o link para pagamento da fatura\"\n   - Se o cliente quiser a segunda via (independente de regularizado ou pendente): “Aqui está o link da 2a via do seu boleto”\n\n# Regra de Segurança\nNunca invente informações. Baseie-se estritamente no retorno da ferramenta.\n\n# REGRA DE TEXTO (IMPORTANTE)\nVocê está em um chat simples que quebra se receber códigos.\n1. Escreva como se fosse um bloco de notas simples.\n2. NUNCA use negrito, itálico, asteriscos ou códigos de formatação.\n\n\n# Regra de saída\nSe o assunto for SUPORTE TÉCNICO (App/Dúvidas) ou CS (Investir/Agendar), responda apenas:\n##RESET##\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        48,
+        -176
+      ],
+      "id": "f8be3bba-446a-4128-b04b-88e3fedc01dd",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        32
+      ],
+      "id": "9fa530f8-7909-44a7-99c6-baedb8c89985",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EnxFiBdUidzOHSlk",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.ChatID }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        64,
+        32
+      ],
+      "id": "bf8996de-c015-42f0-abb9-8a9ac700eaa7",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1Pl8jF6R13ChyHgvLlcqL5DtJJlTfx3Wn6N-6ax1qykg/edit?gid=82804578#gid=82804578",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 82804578,
+          "mode": "list",
+          "cachedResultName": "financeiro",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Pl8jF6R13ChyHgvLlcqL5DtJJlTfx3Wn6N-6ax1qykg/edit#gid=82804578"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "E-mail Cliente",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', `Use o e-mail que o cliente forneceu para conferência dos dados`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        32
+      ],
+      "id": "13f0d44d-ac7e-4c0c-b60a-2f4ab9202a2d",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oFpLCIE5mDZikhVy",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "487b3195-4a28-4c28-a20e-5d43d50ccbed",
+  "activeVersionId": "487b3195-4a28-4c28-a20e-5d43d50ccbed",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-05T17:07:16.772Z",
+      "createdAt": "2026-08-05T17:07:16.772Z",
+      "role": "workflow:owner",
+      "workflowId": "c9pZkQtLNnArx36q",
+      "projectId": "VvYL4IoPp5j8LYt4"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-08-05T17:29:50.000Z",
+    "createdAt": "2026-08-05T17:29:38.119Z",
+    "versionId": "487b3195-4a28-4c28-a20e-5d43d50ccbed",
+    "workflowId": "c9pZkQtLNnArx36q",
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "mensagem"
+              },
+              {
+                "name": "ChatID"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -256,
+          -176
+        ],
+        "id": "712c19c4-b4af-4c76-abb5-6c2ea8940336",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.mensagem }}",
+          "options": {
+            "systemMessage": "=# Identidade\nVocê é a Bia, Analista Financeira da Hashtag Capital.\nSeu tom é: Empático, Colaborativo e Atencioso. Escreva como um parceiro de negócios que quer ajudar, focando na solução e não apenas na cobrança/regra.\n\n# Contexto Temporal\nA data e hora exata de hoje é: {{ $now }}.\nUse para verificar vencimentos de boletos.\n\n# Sua Ferramenta Principal\nVocê tem acesso à tool `consultar_status_cliente`.\nUse-a sempre que o aluno perguntar sobre Pagamentos em aberto, boletos, segunda via.\n\n# Instruções de Operação\n1. Coleta de dados. Peça o nome e e-mail do cliente para conferência\n2. Consulta: Chame a tool enviando o E-mail do cliente.\n3. Análise do Retorno:\n   - Se \"Sem Pendências\": \"Sua conta está regular e sem pendências financeiras.\"\n   - Se \"Pendente\": \"Aqui está o link para pagamento da fatura\"\n   - Se o cliente quiser a segunda via (independente de regularizado ou pendente): “Aqui está o link da 2a via do seu boleto”\n\n# Regra de Segurança\nNunca invente informações. Baseie-se estritamente no retorno da ferramenta.\n\n# REGRA DE TEXTO (IMPORTANTE)\nVocê está em um chat simples que quebra se receber códigos.\n1. Escreva como se fosse um bloco de notas simples.\n2. NUNCA use negrito, itálico, asteriscos ou códigos de formatação.\n\n\n# Regra de saída\nSe o assunto for SUPORTE TÉCNICO (App/Dúvidas) ou CS (Investir/Agendar), responda apenas:\n##RESET##\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          48,
+          -176
+        ],
+        "id": "f8be3bba-446a-4128-b04b-88e3fedc01dd",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          -96,
+          32
+        ],
+        "id": "9fa530f8-7909-44a7-99c6-baedb8c89985",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "EnxFiBdUidzOHSlk",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.ChatID }}",
+          "contextWindowLength": 50
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.4,
+        "position": [
+          64,
+          32
+        ],
+        "id": "bf8996de-c015-42f0-abb9-8a9ac700eaa7",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "https://docs.google.com/spreadsheets/d/1Pl8jF6R13ChyHgvLlcqL5DtJJlTfx3Wn6N-6ax1qykg/edit?gid=82804578#gid=82804578",
+            "mode": "url"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 82804578,
+            "mode": "list",
+            "cachedResultName": "financeiro",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Pl8jF6R13ChyHgvLlcqL5DtJJlTfx3Wn6N-6ax1qykg/edit#gid=82804578"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "E-mail Cliente",
+                "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', `Use o e-mail que o cliente forneceu para conferência dos dados`, 'string') }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          224,
+          32
+        ],
+        "id": "13f0d44d-ac7e-4c0c-b60a-2f4ab9202a2d",
+        "name": "Get row(s) in sheet in Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "oFpLCIE5mDZikhVy",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet in Google Sheets": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Rogério Pisa",
+    "name": "Version 487b3195",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
