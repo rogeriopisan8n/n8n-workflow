@@ -1,0 +1,33 @@
+{
+  "updatedAt": "2026-08-03T13:00:20.000Z",
+  "createdAt": "2026-08-03T12:57:16.806Z",
+  "id": "6cXmvnhCRJyDAGsC",
+  "name": "Agente Financeiro - Aula 3",
+  "active": false,
+  "isArchived": true,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "4c7d521f-746c-4a4a-8b41-e14fd6c31883",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-03T12:57:16.808Z",
+      "createdAt": "2026-08-03T12:57:16.808Z",
+      "role": "workflow:owner",
+      "workflowId": "6cXmvnhCRJyDAGsC",
+      "projectId": "VvYL4IoPp5j8LYt4"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
