@@ -1,0 +1,287 @@
+{
+  "updatedAt": "2026-08-22T15:48:28.203Z",
+  "createdAt": "2026-08-22T15:46:44.224Z",
+  "id": "SeOnjGBcdax6Akvh",
+  "name": "My workflow 14",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"name\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n      \"email\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n      \"linkedin\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n      \"score\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t\t\n\t}\n}"
+      },
+      "id": "abb60ea6-d37d-44e4-b9f9-3889a9676674",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        1488,
+        240
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "## Screener de Currículo do Gmail para Sheets\n\n### 📃Antes de começar, você precisará:\n- [instalação n8n](https://n8n.partnerlinks.io/n8nTTVideoGenTemplate) \n- [Chave de API OpenAI](https://platform.openai.com/api-keys)\n- Google Sheets API habilitada em [Google Cloud Console](https://console.cloud.google.com/apis/api/sheets.googleapis.com/overview)\n- Google Drive API habilitada em [Google Cloud Console](https://console.cloud.google.com/apis/api/drive.googleapis.com/overview)\n- Client ID OAuth 2.0 e Client Secret de suas [Credenciais Google Cloud Console](https://console.cloud.google.com/apis/credentials)",
+        "height": 324,
+        "width": 480
+      },
+      "id": "16d351a7-c3df-4aaf-9cb4-369c742e5577",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "id": "c58e4c0a-6df9-4c12-812b-6450588b1c19",
+      "name": "Extract text from PDF File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        1088,
+        32
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the resume:\n\n{{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an invaluable assistant. You were given a resume. You have to help me analyze the resume and give it a score based on the details available in the resume. Also, extract the name, email, and LinkedIn profile from the resume."
+        }
+      },
+      "id": "8910a500-4135-487b-8c41-fa17dc371773",
+      "name": "AI Agent to evaluate Resume",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1312,
+        32
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "3552d633-7119-43ac-bdbd-b8abb4bddf2a",
+      "name": "OpenAI Chat Model (GPT 4o-mini)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1280,
+        240
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1SGYsuJI2YJVztZZmSLsFZ0lbUHnxm0V9r3c8S5-2q74",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SGYsuJI2YJVztZZmSLsFZ0lbUHnxm0V9r3c8S5-2q74/edit?usp=drivesdk",
+          "cachedResultName": "Lead Generation"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 781640061,
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SGYsuJI2YJVztZZmSLsFZ0lbUHnxm0V9r3c8S5-2q74/edit#gid=781640061",
+          "cachedResultName": "Resume Score"
+        },
+        "columns": {
+          "value": {
+            "Name": "={{ $json.output.name }}",
+            "Email": "={{ $json.output.email }}",
+            "Score": "={{ $json.output.score }}",
+            "LinkedIn": "={{ $json.output.linkedin }}",
+            "Resume text": "={{ $('Extract text from PDF File').item.json.text }}"
+          },
+          "schema": [
+            {
+              "id": "Name",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Name",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Email",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "LinkedIn",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Score",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume text",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Resume text",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "db92eca4-2b6b-4d4c-bdb1-aaa308330b62",
+      "name": "Add Resume Evaluation to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1680,
+        32
+      ],
+      "typeVersion": 4.5
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour",
+              "minute": 1
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "UNREAD"
+          ],
+          "q": "has:attachment",
+          "readStatus": "unread"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "id": "1f22d6aa-c7af-4d28-ba35-3c6b6afac5ca",
+      "name": "Trigger on new Email Received",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "position": [
+        832,
+        32
+      ],
+      "typeVersion": 1.2
+    }
+  ],
+  "connections": {
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent to evaluate Resume",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text from PDF File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent to evaluate Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent to evaluate Resume": {
+      "main": [
+        [
+          {
+            "node": "Add Resume Evaluation to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger on new Email Received": {
+      "main": [
+        [
+          {
+            "node": "Extract text from PDF File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model (GPT 4o-mini)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent to evaluate Resume",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "fefc879f-1759-42e1-b2a6-fe7cc5203e51",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-22T15:46:44.224Z",
+      "createdAt": "2026-08-22T15:46:44.224Z",
+      "role": "workflow:owner",
+      "workflowId": "SeOnjGBcdax6Akvh",
+      "projectId": "VCNaDfyxk6OyLZB2"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
