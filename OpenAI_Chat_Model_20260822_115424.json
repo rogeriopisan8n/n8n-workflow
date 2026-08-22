@@ -1,0 +1,106 @@
+{
+  "updatedAt": "2026-08-22T15:46:44.636Z",
+  "createdAt": "2026-08-22T15:46:44.636Z",
+  "id": "oEji31ZaSRuOsMhF",
+  "name": "OpenAI Chat Model",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -464,
+        -160
+      ],
+      "id": "84a700bb-1b9b-4d1e-9c59-1b579a016f8a",
+      "name": "When chat message received",
+      "webhookId": "2856a381-725d-49be-9795-5bbf8dd1ce25"
+    },
+    {
+      "parameters": {
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -208,
+        -160
+      ],
+      "id": "0cc1e40b-bd3a-4644-b9ca-123c9b9f3bf5",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        80
+      ],
+      "id": "cba75155-f819-4ed8-a946-8a37df2a24cb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "6pCPchtfX2kLzvYp",
+          "name": "OpenAI account - Aula 4"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "ad0b6e79-b900-49ab-ad1a-38d291fa7f82",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-22T15:46:44.636Z",
+      "createdAt": "2026-08-22T15:46:44.636Z",
+      "role": "workflow:owner",
+      "workflowId": "oEji31ZaSRuOsMhF",
+      "projectId": "VCNaDfyxk6OyLZB2"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
