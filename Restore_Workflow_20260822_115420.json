@@ -1,0 +1,259 @@
+{
+  "updatedAt": "2026-08-22T15:50:14.888Z",
+  "createdAt": "2026-08-21T16:31:10.851Z",
+  "id": "QbjrmoJWL5G28nw0",
+  "name": "Restore Workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        -928
+      ],
+      "id": "b405dd98-172a-4bc3-8cfb-ba1d165e52d5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "rogeriopisan8n",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflow",
+          "mode": "list",
+          "cachedResultName": "n8n-workflow",
+          "cachedResultUrl": "https://github.com/rogeriopisan8n/n8n-workflow"
+        },
+        "filePath": "={{$json.path}}",
+        "additionalParameters": {}
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        -928
+      ],
+      "id": "db08825f-2ade-4c77-b30f-a550ffff8854",
+      "name": "Get a file",
+      "webhookId": "224c117c-9de6-4bc7-8e4e-8381c44181b8",
+      "alwaysOutputData": true,
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "OhOvu4FUvxVhtuYC",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.error}} is empty",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "e6ca1f79-a10a-4c2f-9222-b8796425ef76"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "restore_backups"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        -928
+      ],
+      "id": "ea9dec8f-afc1-4119-9f9c-7ddc1d156981",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        -928
+      ],
+      "id": "d26e8691-3649-4940-a41f-cb8e84404beb",
+      "name": "Extract from File",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "operation": "list",
+        "owner": {
+          "__rl": true,
+          "value": "rogeriopisan8n",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-workflow",
+          "mode": "name"
+        },
+        "filePath": "/"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        -1168,
+        -928
+      ],
+      "id": "1318e943-8680-4f68-9f61-99a6a8d48e22",
+      "name": "List files",
+      "webhookId": "642e1289-5df6-4e65-97b1-e2ae17de3b1e",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "OhOvu4FUvxVhtuYC",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "workflowObject": "={{ JSON.stringify({\n  name: $('Extract from File').item.json.data.name,\n  nodes: $('Extract from File').item.json.data.nodes,\n  connections: $('Extract from File').item.json.data.connections\n}) }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -928
+      ],
+      "id": "12fb8809-c931-4a71-9f2e-48841ae754f4",
+      "name": "Create a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "QZkbBi5edGbz8CvG",
+          "name": "n8n account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "List files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List files": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {},
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "c1abd74b-8dc2-42fb-af9a-400278971eee",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-21T16:31:10.851Z",
+      "createdAt": "2026-08-21T16:31:10.851Z",
+      "role": "workflow:owner",
+      "workflowId": "QbjrmoJWL5G28nw0",
+      "projectId": "VCNaDfyxk6OyLZB2"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
